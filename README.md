@@ -20,7 +20,7 @@ OpenDungeon is a PyQT-based application that delivers an immersive Dungeons \& D
 ## Requirements
 
 - Python 3.10+
-- API access for OpenRouter, Azure TTS, FLUX.1, and Webshare
+- API access for OpenRouter, Azure TTS, and Webshare (all free)
 
 
 ## Installation

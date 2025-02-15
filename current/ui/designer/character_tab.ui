@@ -455,7 +455,7 @@
        <item row="7" column="1">
         <widget class="QLabel" name="backstoryLabel">
          <property name="text">
-          <string>Backstory:</string>
+          <string>Backstory/Appearance:</string>
          </property>
         </widget>
        </item>

@@ -66,82 +66,70 @@ async def test_proxy(proxy_str: str) -> bool:
         return False
 
 async def generate_image_async(prompt: str, save_path: str) -> str:
-    """Generate character image using Flux AI generator with proxy support and retry logic"""
-    proxies = await get_proxies()
-    
-    # Test and filter proxies
-    working_proxies = []
-    for proxy_str in proxies:
-        if await test_proxy(proxy_str):
-            working_proxies.append(proxy_str)
-    
-    if not working_proxies:
-        logging.warning("No working proxies available, running without proxy")
-        proxy = None
-    else:
-        proxy_str = random.choice(working_proxies)
-        logging.info(f"Using proxy: {proxy_str}")
-        proxy_parts = proxy_str.split(":")
-        proxy = {
-            "server": f"http://{proxy_parts[0]}:{proxy_parts[1]}",
-            "username": PROXY_USERNAME,
-            "password": PROXY_PASSWORD
-        }
-    
+    """Generate character image using Flux AI generator with proxy support"""
+    if not prompt:
+        logging.error("No prompt provided for image generation")
+        return None
+        
     try:
+        logging.info(f"Generating image with prompt: {prompt}")
         async with async_playwright() as p:
-            launch_options = {"headless": True}  # Set to True for production
-            if proxy:
-                launch_options["proxy"] = proxy
-            
-            browser = await p.chromium.launch(**launch_options)
+            browser = await p.chromium.launch(headless=True)
             page = await browser.new_page()
             
-            # Navigate to Flux generator
-            await page.goto("https://ai-girl.site/flux-ai-image-generator", timeout=30000)  # Increased timeout
+            # Navigate to generator
+            await page.goto("https://ai-girl.site/flux-ai-image-generator", timeout=30000)
             logging.info("Page loaded")
             
-            # Enter prompt
-            await page.fill('input[data-testid="textbox"]', prompt)
-            logging.info(f"Entered prompt: {prompt}")
+            # Wait for input field and enter prompt
+            input_field = await page.wait_for_selector('input[data-testid="textbox"]', timeout=5000)
+            await input_field.fill(prompt)
+            logging.info("Entered prompt")
             
-            # Start generation
+            # Click generate button
             await page.click('button:has-text("Run")')
-            logging.info("Started image generation")
+            logging.info("Started generation")
             
-            # Wait for generation (typical time ~15s)
+            # Wait for image generation
             await page.wait_for_timeout(16000)
             
-            # Look for the generated image with specific class pattern
-            image_element = await page.wait_for_selector(
+            # Look for generated image
+            image = await page.wait_for_selector(
                 'img.svelte-1pijsyv[src^="https://black-forest-labs-flux-1-schnell.hf.space/file=/tmp/gradio/"]',
                 timeout=35000
             )
             
-            if not image_element:
-                raise Exception("Could not find generated image on the page")
+            if not image:
+                raise Exception("No image element found after generation")
+                
+            img_src = await image.get_attribute('src')
+            logging.info(f"Found image source: {img_src}")
             
-            img_src = await image_element.get_attribute('src')
-            logging.info(f"Found image: {img_src}")
+            # Download and save image
+            img_response = await page.request.get(img_src)
+            img_data = await img_response.body()
             
-            # Download image
-            response = await page.request.get(img_src, timeout=30000)  # Increased timeout
-            image_data = await response.body()
-            
-            # Save image
             os.makedirs(os.path.dirname(save_path), exist_ok=True)
             with open(save_path, 'wb') as f:
-                f.write(image_data)
-            
+                f.write(img_data)
+                
             await browser.close()
+            logging.info(f"Image saved to: {save_path}")
             return save_path
             
     except Exception as e:
-        logging.error(f"Error generating image: {str(e)}")
+        logging.error(f"Error generating image: {e}")
         return None
 
 def generate_image(prompt: str, save_path: str) -> str:
     """Synchronous wrapper for generate_image_async"""
-    return asyncio.get_event_loop().run_until_complete(
-        generate_image_async(prompt, save_path)
-    )
+    try:
+        print(f"Starting image generation with prompt: {prompt}")
+        result = asyncio.get_event_loop().run_until_complete(
+            generate_image_async(prompt, save_path)
+        )
+        print(f"Image generation completed: {result}")
+        return result
+    except Exception as e:
+        logging.error(f"Error in generate_image: {e}")
+        return None

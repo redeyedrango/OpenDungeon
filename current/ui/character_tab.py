@@ -422,10 +422,18 @@ class CharacterTab(QWidget):
         }
         
         try:
-            # Save character first to get the filepath
+            # Verify API key availability before attempting image generation
+            if not self.image_handler.api_key:
+                self.show_temporary_notification(
+                    "Warning: No OpenRouter API key found. Character saved without portrait.", 
+                    3000
+                )
+                char_path = self.game_manager.save_character(character)
+                self.game_manager.set_player_character(character)
+                return
+                
+            # Rest of the existing image generation code
             char_path = self.game_manager.save_character(character)
-            
-            # Generate and save image - move this before setting as player character
             save_dir = os.path.dirname(char_path)
             image_path = self.image_handler.generate_and_save_image(character, save_dir)
             
@@ -441,6 +449,11 @@ class CharacterTab(QWidget):
             self.game_manager.set_player_character(character)
             self.show_temporary_notification("Character saved and portrait generated!")
             
+        except ValueError as ve:
+            self.show_temporary_notification(f"API Error: {str(ve)}", 3000)
+            # Still save the character without an image
+            self.game_manager.save_character(character)
+            self.game_manager.set_player_character(character)
         except Exception as e:
             self.show_temporary_notification(f"Error: {str(e)}", 3000)
 
@@ -548,3 +561,4 @@ class CharacterTab(QWidget):
         # Update displays with calculated values
         self.hpDisplay.setText(str(final_hp))
         self.acDisplay.setText(str(final_ac))
+

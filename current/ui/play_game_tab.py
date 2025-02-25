@@ -2,11 +2,13 @@ from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QTextEdit,
                            QPushButton, QLabel, QScrollArea, QFrame, QApplication,
                            QSizePolicy, QMessageBox, QAbstractScrollArea, QInputDialog)
 from PyQt5.QtCore import Qt, QTimer
-from PyQt5.QtGui import QFont, QTextCursor
+from PyQt5.QtGui import QFont, QTextCursor, QPixmap
 from enum import Enum
 import traceback
 from PyQt5 import uic
 import random
+import os
+from scene_image_handler import SceneImageHandler
 
 class GameState(Enum):
     WAITING_FOR_INPUT = 1
@@ -17,13 +19,46 @@ class GameState(Enum):
 class GameLogEntry(QFrame):
     def __init__(self, text, entry_type="normal", parent=None):
         super().__init__(parent)
-        layout = QVBoxLayout(self)
+        self.main_layout = QVBoxLayout(self)
         self.text_area = QTextEdit()
         self.text_area.setReadOnly(True)
         self.text_area.setText(text)
         self.text_area.setMinimumHeight(100)
-        layout.setContentsMargins(0, 0, 0, 0)
-        layout.addWidget(self.text_area)
+        self.main_layout.setContentsMargins(0, 0, 0, 0)
+        self.main_layout.addWidget(self.text_area)
+        
+        # Add image generation button for DM messages
+        if entry_type == "dm":
+            self.image_layout = QVBoxLayout()
+            self.generate_image_btn = QPushButton("🎨 Generate Scene Image")
+            self.generate_image_btn.setStyleSheet("""
+                QPushButton {
+                    background-color: #2980B9;
+                    color: white;
+                    border: none;
+                    border-radius: 5px;
+                    padding: 5px;
+                    max-width: 200px;
+                }
+                QPushButton:hover {
+                    background-color: #3498DB;
+                }
+            """)
+            self.image_layout.addWidget(self.generate_image_btn)
+            
+            # Add image display label (hidden initially)
+            self.image_label = QLabel()
+            self.image_label.setVisible(False)
+            self.image_label.setStyleSheet("""
+                QLabel {
+                    background-color: transparent;
+                    border: 2px solid #203D72;
+                    border-radius: 10px;
+                    padding: 5px;
+                }
+            """)
+            self.image_layout.addWidget(self.image_label)
+            self.main_layout.addLayout(self.image_layout)
         
         # Apply styles based on entry type
         if entry_type == "dm":
@@ -105,13 +140,45 @@ class PlayGameTab(QWidget):
                 background-color: #3498DB;
             }
         """)
+        
+        # Initialize scene image handler
+        self.scene_image_handler = SceneImageHandler(game_manager)
 
     def add_message(self, text: str, is_dm: bool = False):
         entry = GameLogEntry(text, "dm" if is_dm else "normal")
-        self.gameLogLayout.addWidget(entry)
         if is_dm:
             self.last_dm_message = text
+            # Connect image generation button if it's a DM message
+            entry.generate_image_btn.clicked.connect(
+                lambda: self.generate_scene_image(entry, text)
+            )
+        self.gameLogLayout.addWidget(entry)
+
+    def generate_scene_image(self, entry: GameLogEntry, scene_text: str):
+        """Generate and display an image for the given scene"""
+        try:
+            entry.generate_image_btn.setEnabled(False)
+            entry.generate_image_btn.setText("Generating image...")
             
+            # Generate the image
+            image_path = self.scene_image_handler.generate_scene_image(scene_text)
+            
+            if image_path and os.path.exists(image_path):
+                # Load and display the image
+                pixmap = QPixmap(image_path)
+                scaled_pixmap = pixmap.scaled(600, 400, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+                entry.image_label.setPixmap(scaled_pixmap)
+                entry.image_label.setVisible(True)
+            else:
+                QMessageBox.warning(self, "Error", "Failed to generate scene image")
+                
+        except Exception as e:
+            QMessageBox.warning(self, "Error", f"Error generating scene image: {str(e)}")
+            
+        finally:
+            entry.generate_image_btn.setEnabled(True)
+            entry.generate_image_btn.setText("🎨 Generate Scene Image")
+
     def submit_action(self):
         action = self.inputArea.toPlainText().strip()
         if action:

@@ -1,11 +1,13 @@
 from PyQt5.QtWidgets import (QWidget, QMessageBox, QLabel, QPushButton, 
                            QVBoxLayout, QHBoxLayout, QSizePolicy)
 from PyQt5 import QtWidgets  # Import QtWidgets as a module
-from PyQt5.QtCore import Qt, QTimer, QPropertyAnimation, QPoint
+from PyQt5.QtCore import Qt, QTimer, QPropertyAnimation, QPoint, QUrl
 from PyQt5.QtGui import QPixmap
 from PyQt5 import uic
+from PyQt5.QtWebEngineWidgets import QWebEngineView
 import os
 import sys
+import random
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from character_image_handler import CharacterImageHandler
@@ -120,6 +122,16 @@ class CharacterTab(QWidget):
         self.raceCombo.currentTextChanged.connect(self.update_derived_stats)
         
         self.current_notification = None
+
+        # Initialize logo carousel
+        self.logos_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'logos')
+        self.logo_timer = QTimer(self)
+        self.logo_timer.timeout.connect(self.update_logo)
+        self.logo_timer.start(5000)  # Change logo every 5 seconds
+        self.update_logo()  # Show initial logo
+
+        # Initialize YouTube player
+        self.setup_youtube_player()
 
     def setup_ui(self):
         """Setup UI elements and styles"""
@@ -263,6 +275,33 @@ class CharacterTab(QWidget):
                 QSizePolicy.Expanding
             )
             widget.setMinimumHeight(100)  # Set minimum height
+
+        # Configure logo display
+        self.logoDisplay.setStyleSheet("""
+            QLabel {
+                background-color: transparent;
+                border-radius: 10px;
+                padding: 5px;
+            }
+        """)
+        self.logoDisplay.setMinimumSize(700, 400)
+        self.logoDisplay.setMaximumSize(700, 400)
+        self.logoDisplay.setSizePolicy(
+            QSizePolicy.Fixed,
+            QSizePolicy.Fixed
+        )
+        self.logoDisplay.setAlignment(Qt.AlignCenter)
+
+        # Configure YouTube player
+        self.youtubePlayer.setStyleSheet("""
+            QWebEngineView {
+                background-color: transparent;
+                border-radius: 10px;
+                padding: 5px;
+            }
+        """)
+        self.youtubePlayer.setMinimumSize(700, 400)
+        self.youtubePlayer.setMaximumSize(700, 400)
 
     def setup_widgets(self):
         """Initialize widget values and properties"""
@@ -561,4 +600,36 @@ class CharacterTab(QWidget):
         # Update displays with calculated values
         self.hpDisplay.setText(str(final_hp))
         self.acDisplay.setText(str(final_ac))
+
+    def update_logo(self):
+        """Update the displayed logo with a random one from the logos folder"""
+        try:
+            if os.path.exists(self.logos_dir):
+                logo_files = [f for f in os.listdir(self.logos_dir) if f.lower().endswith(('.png', '.jpg', '.jpeg'))]
+                if logo_files:
+                    logo_file = random.choice(logo_files)
+                    logo_path = os.path.join(self.logos_dir, logo_file)
+                    pixmap = QPixmap(logo_path)
+                    scaled_pixmap = pixmap.scaled(700, 400, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+                    self.logoDisplay.setPixmap(scaled_pixmap)
+                    self.logoDisplay.setAlignment(Qt.AlignCenter)
+        except Exception as e:
+            print(f"Error updating logo: {e}")
+
+    def setup_youtube_player(self):
+        """Setup the YouTube player with embedded playlist"""
+        # Create YouTube embed URL with your playlist
+        youtube_url = "https://www.youtube.com/embed/videoseries?list=PLSkW9yhFguFRP0FZbD3W1_aY1gzYS9KBl"
+        
+        # Load the URL in the web view
+        self.youtubePlayer.setUrl(QUrl(youtube_url))
+        
+        # Set size policy and style
+        self.youtubePlayer.setSizePolicy(
+            QSizePolicy.Fixed,
+            QSizePolicy.Fixed
+        )
+        
+        # Optional: Add some basic controls
+        self.youtubePlayer.page().setBackgroundColor(Qt.transparent)
 

@@ -1,6 +1,7 @@
 import sys
 import os
 from dotenv import load_dotenv
+from PyQt5.QtGui import QIcon
 
 # Load environment variables before anything else
 load_dotenv()
@@ -18,6 +19,12 @@ def main():
         print("Warning: OPENROUTER_API_KEY not found in environment variables!")
     
     app = QApplication(sys.argv)
+    
+    # Set application icon
+    icon_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'icon.ico')
+    if os.path.exists(icon_path):
+        app.setWindowIcon(QIcon(icon_path))
+    
     game_manager = GameManager()
     window = MainWindow(game_manager)
     window.show()

@@ -10,3 +10,4 @@ playwright>=1.41.2
 pyee>=11.0.1
 pyppeteer-stealth>=2.7.4
 azure-cognitiveservices-speech
+PyQtWebEngine>=5.15.0

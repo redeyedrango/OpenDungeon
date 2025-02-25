@@ -1,6 +1,7 @@
 from PyQt5.QtWidgets import QMainWindow, QTabWidget
 from PyQt5.QtCore import Qt
 from PyQt5 import uic, QtWidgets
+from PyQt5.QtGui import QIcon
 import os
 from .character_tab import CharacterTab
 from .adventure_tab import AdventureTab
@@ -19,6 +20,11 @@ class MainWindow(QMainWindow):
         
         # Load the UI file
         uic.loadUi('current/ui/designer/main_window.ui', self)
+        
+        # Set application icon
+        icon_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'icon.ico')
+        if os.path.exists(icon_path):
+            self.setWindowIcon(QIcon(icon_path))
         
         # Create and add tabs with game_manager
         self.setup_tabs()

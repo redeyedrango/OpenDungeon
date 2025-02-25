@@ -1,6 +1,4 @@
-
-# OpenDungeon
-
+<img src="\logos\4.jpg" width="1050" />
 
 OpenDungeon is a PyQT-based application that delivers an immersive Dungeons \& Dragons experience using advanced AI tools. The Dungeon Master is fully controlled by an LLM of your choice from OpenRouter, and each NPC can be individually configured with its own LLM. Generate and save complete parties—with all normal D\&D details—seamlessly integrated with dynamic image and voice enhancements.
 

